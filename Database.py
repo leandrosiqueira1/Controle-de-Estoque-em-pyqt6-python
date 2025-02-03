@@ -59,3 +59,30 @@ class Database:
             conn.close()
             return user
         return None
+    
+    def salvarProduto(self, produto, unidade, categoria):
+        try:
+            query = '''
+                INSERT INTO produto (nome_produto, id_unidade, id_categoria, data_cadastro, usuario)
+                VALUES (?, (SELECT id_unidade FROM unidade WHERE unidade = ?), (SELECT id_categoria FROM categoria WHERE categoria = ?), CURRENT_DATE, ?)
+            '''
+            self.cursor.execute(query, (produto, unidade, categoria, "Usuário"))
+            self.conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"Erro ao salvar produto: {e}")
+            return False
+        
+    def salvarFornecedor(self, nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, data_cadastro, telefone_celular, email):
+        try:
+            query = '''
+                INSERT INTO fornecedor (nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, data_cadastro, telefone_celular, email)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            '''
+            self.cursor.execute(query, (nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, data_cadastro, telefone_celular, email))
+            self.conn.commit()
+            print("Fornecedor salvo com sucesso.")
+            return True
+        except sqlite3.Error as e:
+            print(f"Erro ao salvar fornecedor: {e}")
+            return False

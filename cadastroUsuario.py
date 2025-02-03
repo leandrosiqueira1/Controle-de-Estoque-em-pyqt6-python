@@ -4,16 +4,30 @@ from PyQt6.QtGui import QPixmap, QFont
 from PyQt6.QtCore import Qt
 import hashlib  
 
-class TelaCadastro(QWidget):
+class TelaUsuario(QWidget):
     def __init__(self):
         super().__init__()
+
+        # Definição das cores usadas na interface
+        self.corVerdeEscuro = "#1D6373"  # Cor verde escuro
+        self.corVerdeclaro1 = "#378C74"  # Verde mais claro
+        self.corVerdeclaro2 = "#49A671"  # Verde ainda mais claro
+        self.corButton = "#3084F2"  # Cor dos botões entrar 
+        self.corBranco = "#F2F2F2"       # Cor branca para fundo
+        self.corEsqForm = "#222602" #Cor do lado esquerdo do formulário
+        self.corDirForm = "#DCF230" #Cor do lador direito do formulario
+        self.corForm = "#DCF230"
+        self.corTitle = "#000000" 
         
         self.initUI()
+        
 
     def initUI(self):
         # Configurações da janela (800x600)
         self.setWindowTitle("Tela de Cadastro")
         self.setFixedSize(1280, 800)
+        
+
 
         # Layout principal
         layoutPrincipal = QVBoxLayout()
@@ -28,14 +42,15 @@ class TelaCadastro(QWidget):
         logo.setStyleSheet("background-color: transparent;")
         logo.setFixedSize(180, 180)  
     
-        logo.setPixmap(QPixmap("img/user-tipo_02_02.png").scaled(150, 150))
+        logo.setPixmap(QPixmap("img/user-tipo_02-03.png").scaled(150, 150))
         layoutImagem.addWidget(logo) 
         layoutImagem.addStretch() 
         layoutImagem.setAlignment(Qt.AlignmentFlag.AlignHCenter)  
 
       
         self.frameFundo = QFrame()
-        self.frameFundo.setFixedSize(500, 500) 
+        self.frameFundo.setFixedSize(500, 500)
+        self.frameFundo.setStyleSheet("background-color: {self.corForm};") 
         layoutForm = QFormLayout(self.frameFundo)
         layoutForm.setContentsMargins(40, 40, 40, 40) 
         layoutForm.setSpacing(20) 
@@ -85,6 +100,8 @@ class TelaCadastro(QWidget):
             QPushButton:hover {
                 background-color: #378C74;
             }
+                       
+            }                          
         """)
         self.btnCadastrar.clicked.connect(self.realizarCadastro)
         layoutForm.addRow(self.btnCadastrar)
@@ -95,7 +112,8 @@ class TelaCadastro(QWidget):
         # Estilo CSS para os widgets
         self.setStyleSheet("""
             QWidget {
-                background-color: #ffffff;
+                background-color: #DCF230;")
+                
             }
             QLabel {
                 font-size: 16px;
@@ -110,7 +128,7 @@ class TelaCadastro(QWidget):
                 height: 35px;
             }
             QFrame {
-                background-color: #f2f2f2;
+                background-color: {#DCF230};
                 border-radius: 15px;
                 box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
             }
@@ -162,7 +180,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     # Criar a janela de cadastro
-    cadastro_window = TelaCadastro()
+    cadastro_window = TelaUsuario()
     cadastro_window.show()
     # Executar o loop de eventos
     sys.exit(app.exec())

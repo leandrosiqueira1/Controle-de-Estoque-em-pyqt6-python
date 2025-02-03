@@ -1,16 +1,16 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, 
-    QLineEdit, QPushButton, QLabel, QFormLayout, QFrame, QMessageBox,QComboBox
+    QLineEdit, QPushButton, QLabel, QFormLayout, QFrame, QMessageBox
 )
 from PyQt6.QtGui import QIcon, QFont
 from PyQt6.QtCore import Qt
 import sqlite3
 from Database import Database
-from datetime import datetime  # Importa datetime
+
 
 # Classe principal que define a tela de cadastro de fornecedores
-class TelaCadastroFornecedor(QWidget):
+class TelaCadastroProduto(QWidget):
     def __init__(self):
         super().__init__()  # Chama o construtor da classe QWidget
 
@@ -19,16 +19,19 @@ class TelaCadastroFornecedor(QWidget):
         self.corVerdeclaro1 = "#378C74"  # Verde mais claro
         self.corVerdeclaro2 = "#49A671"  # Verde ainda mais claro
         self.corButton = "#3084F2"  # Cor dos botões entrar 
-        self.corBranco = "#F2F2F2"  # Cor branca para fundo
-        self.corEsqForm = "#222602"  # Cor do lado esquerdo do formulário
-        self.corDirForm = "#DCF230"  # Cor do lado direito do formulário
+        self.corBranco = "#F2F2F2"       # Cor branca para fundo
+        self.corEsqForm = "#222602" #Cor do lado esquerdo do formulário
+        self.corDirForm = "#DCF230" #Cor do lador direito do formulario
         self.corTitle = "#000000" 
+
+
+        #self.fontRoboto = QFont("Roboto",25)
 
         self.initUI()  # Chama o método que inicializa a interface
 
     def initUI(self):
         # Configurações básicas da janela
-        self.setWindowTitle("Cadastro de Fornecedor")  # Define o título da janela
+        self.setWindowTitle("Cadastro de Produto")  # Define o título da janela
         self.setFixedSize(1280, 800)  # Define o tamanho fixo da janela
 
         # Layout principal horizontal que organiza os elementos lado a lado
@@ -41,6 +44,8 @@ class TelaCadastroFornecedor(QWidget):
         frameEsquerda.setStyleSheet(f"background-color:{self.corEsqForm};")  # Fundo branco
         frameEsquerda.setFixedSize(350, 800)  # Largura fixa
         layoutEsquerda = QVBoxLayout(frameEsquerda)  # Layout vertical para organizar os botões
+
+        
 
         # Botão para "Cadastrar Novo Produto"
         btnCadastrarProduto = QPushButton("Cadastrar Novo Produto", self)
@@ -57,7 +62,7 @@ class TelaCadastroFornecedor(QWidget):
         layoutEsquerda.addWidget(btnCadastrarFornecedor)
 
         # Botão para "Cadastrar Entrada de Produto"
-        btnEntradaProduto = QPushButton("Cadastrar Entrada de Produto", self)
+        btnEntradaProduto = QPushButton("Cadastre Entrada de produto", self)
         btnEntradaProduto.setIcon(QIcon('img/logo_250.png'))
         btnEntradaProduto.setFixedSize(300, 60)
         btnEntradaProduto.setStyleSheet(f"background-color: {self.corButton}; color: {self.corBranco}")
@@ -73,11 +78,12 @@ class TelaCadastroFornecedor(QWidget):
 
         # Título do formulário
         layoutTitulo = QVBoxLayout()  # Layout horizontal para centralizar o título
-        tituloFornecedor = QLabel("Cadastro de Fornecedor")  # Texto do título
-        tituloFornecedor.setFont(QFont("Roboto", 50))
-        tituloFornecedor.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.corTitle}; border: none;")  # Estilo do texto
+        tituloFornecedor = QLabel("Cadastro de Produto")  # Texto do título
+        tituloFornecedor.setFont(QFont("Roboto",50))
+        tituloFornecedor.setStyleSheet(f"font-size: 24px; font-weight: bold; color: {self.corTitle};border: none;")  # Estilo do texto
         layoutTitulo.addWidget(tituloFornecedor, alignment=Qt.AlignmentFlag.AlignCenter)  # Centraliza o título
         layoutDireita.addLayout(layoutTitulo)  # Adiciona o título ao layout da direita
+
 
         # Widget para o formulário com borda arredondada
         formularioWidget = QWidget()
@@ -85,11 +91,13 @@ class TelaCadastroFornecedor(QWidget):
             QWidget {
                 background-color:#Dcf230;  /* Cor de fundo do formulário */
                 border: none;
+ 
             }
             QLabel {
                 color: #000000;
                 font-size: 18px;
                 border: none;
+            
             }
             QLineEdit{
                 background-color: #F0F0F0;
@@ -102,73 +110,34 @@ class TelaCadastroFornecedor(QWidget):
         """)
         formulario = QFormLayout(formularioWidget)  # Layout de formulário para organizar campos
         formulario.setFormAlignment(Qt.AlignmentFlag.AlignCenter)  # Centraliza o formulário
-
+        
         layoutbtnSalvar = QHBoxLayout()
         layoutbtnSalvar.addStretch()
 
         # Campos do formulário (inputs)
         self.nomeInput = QLineEdit(self)
-        self.nomeInput.setPlaceholderText("Nome do Fornecedor")  # Texto de exemplo
-        formulario.addRow("Nome:", self.nomeInput)  # Adiciona o campo de nome
+        self.nomeInput.setPlaceholderText("Nome do Produto")  # Texto de exemplo
+        formulario.addRow("Produto", self.nomeInput)  # Adiciona o campo de nome
 
-        self.cnpjInput = QLineEdit(self)
-        self.cnpjInput.setPlaceholderText("CNPJ")  # Texto de exemplo
-        formulario.addRow("CNPJ:", self.cnpjInput)  # Adiciona o campo de CNPJ
+        self.unidadeInput = QLineEdit(self)
+        self.unidadeInput.setPlaceholderText("Unidade")  # Texto de exemplo
+        formulario.addRow("kg", self.unidadeInput)  # Adiciona o campo de unidade
 
-        self.enderecoInput = QLineEdit(self)
-        self.enderecoInput.setPlaceholderText("Rua Monsenhor Tabosa")
-        formulario.addRow("Endereço:", self.enderecoInput)
+        self.categoriaInput = QLineEdit(self)
+        self.categoriaInput.setPlaceholderText("Movel")
+        formulario.addRow("Categoria",self.categoriaInput)
 
-        self.numeroInput = QLineEdit(self)
-        self.numeroInput.setPlaceholderText("1234")
-        formulario.addRow("Nº:", self.numeroInput)
-
-        self.complementoInput = QLineEdit(self)
-        self.complementoInput.setPlaceholderText("Bloco 5, Apto 213")
-        formulario.addRow("Complemento:", self.complementoInput)
-
-        self.cidadeInput = QLineEdit(self)
-        self.cidadeInput.setPlaceholderText("Fortaleza")
-        formulario.addRow("Cidade:", self.cidadeInput)
-
-        self.bairroInput = QLineEdit(self)
-        self.bairroInput.setPlaceholderText("Bairro")
-        formulario.addRow("Bairro:", self.bairroInput)
-
-        self.ufInput = QComboBox(self)
-        estados = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
-        self.ufInput.addItems(estados)
-        formulario.addRow("UF:", self.ufInput)
-
-        self.insEstadualInput = QLineEdit(self)
-        self.insEstadualInput.setPlaceholderText("Incrição Estadual")
-        formulario.addRow("Incrição Estadual", self.insEstadualInput)
-
-        self.telefoneInput = QLineEdit(self)
-        self.telefoneInput.setPlaceholderText("Telefone")  # Texto de exemplo
-        formulario.addRow("Telefone:", self.telefoneInput)  # Adiciona o campo de telefone
-
-        self.emailInput = QLineEdit(self)
-        self.emailInput.setPlaceholderText("E-mail")  # Texto de exemplo
-        formulario.addRow("E-mail:", self.emailInput)  # Adiciona o campo de e-mail
-
-        # Campo Data de Cadastro
-        self.dataCadastro = QLineEdit(self)
-        self.dataCadastro.setText(datetime.today().strftime("%d/%m/%Y"))  # Define a data atual
-        self.dataCadastro.setReadOnly(True)  # Impede edição manual
-        self.dataCadastro.setStyleSheet("background-color: #E0E0E0; color: #000000; border-radius: 10px; padding: 10px;")
-        formulario.addRow("Data de Cadastro",self.dataCadastro)
 
         # Botão "Salvar" no formulário
         btnSalvar = QPushButton("Salvar", self)
-        btnSalvar.setFixedSize(300, 60)
-        btnSalvar.setStyleSheet(f"background-color: {self.corButton}; color: {self.corBranco}; border-radius: 10px; font-size: 16px;")  # Estilo do botão
-        btnSalvar.clicked.connect(self.cadastrarFornecedor)  # Conecta o clique do botão ao método cadastrarFornecedor
+        btnSalvar.setFixedSize(300,60)
+        btnSalvar.setStyleSheet(f"background-color: {self.corButton}; color: {self.corBranco}; border-radius: 10px;font-size: 16px;")  # Estilo do botão
         layoutbtnSalvar.addWidget(btnSalvar)
         layoutbtnSalvar.addStretch()
 
         # Adiciona o layout do botão centralizado ao formulário
         formulario.addRow(layoutbtnSalvar)  # Adiciona o botão ao formulário
+        
 
         # Adiciona o formulário ao layout da direita
         layoutDireita.addWidget(formularioWidget)
@@ -180,50 +149,25 @@ class TelaCadastroFornecedor(QWidget):
         # Adiciona os frames (esquerda e direita) ao layout principal
         layoutPrincipal.addWidget(frameEsquerda, alignment=Qt.AlignmentFlag.AlignLeft)
         layoutPrincipal.addWidget(frameDireita)
-
- 
-    def cadastrarFornecedor(self):
-        fornecedor = self.nomeInput.text()
-        cnpj = self.cnpjInput.text()
-        endereco = self.enderecoInput.text()
-        numero = self.numeroInput.text()
-        complemento = self.complementoInput.text()
-        cidade = self.cidadeInput.text()
-        bairro = self.bairroInput.text()
-        telefone = self.telefoneInput.text()
-        email = self.emailInput.text()
-        datacadastro = self.dataCadastro.text()
-        uf = self.ufInput.currentText()  # Corrigido para pegar o estado correto
-        inscricaoestadual = self.insEstadualInput.text()  # Corrigido para pegar o campo correto
-
-        if not fornecedor or not cnpj or not endereco or not numero or not cidade or not telefone or not email:
-            QMessageBox.warning(self, "Erro", "Por favor, preencha todos os campos obrigatórios.")
-            return
     
+    
+    def cadastarProduto(self):
+
+        produto = self.nomeInput.text()
+        unidade = self.unidadeInput.text()
+        categoria = self.categoriaInput.text()
         db = Database('estoque.db')
-        db.connect()
-
-        if db.salvarFornecedor(fornecedor, cnpj, endereco, numero, complemento, cidade, bairro, uf, inscricaoestadual, datacadastro, telefone, email):
-            QMessageBox.information(self, "Sucesso", "Fornecedor cadastrado com sucesso!")
-            self.limparCampos()
+        
+    
+        if db.salvarProduto(produto,unidade,categoria):
+            QMessageBox.information(self, "Sucesso", "Produto cadastrado com sucesso!")
         else:
-            QMessageBox.warning(self, "Erro", "Erro ao cadastrar o fornecedor!")
-
-    def limparCampos(self):
-        #resposta = QMessageBox.question(self, "Limpar Campos", "Tem certeza que deseja limpar os campos?", QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        #if resposta == QMessageBox.StandardButton.Yes:
-            self.nomeInput.clear()
-            self.cnpjInput.clear()
-            self.enderecoInput.clear()
-            self.numeroInput.clear()
-            self.complementoInput.clear()
-            self.cidadeInput.clear()
-            self.bairroInput.clear()
-            self.telefoneInput.clear()
-            self.emailInput.clear()
+            QMessageBox.warning(self, "Erro", "Erro ao cadastrar o produto!")
+        
+        db.close()
 
 # Inicialização da aplicação
 app = QApplication(sys.argv)  # Cria a aplicação
-fornecedor_window = TelaCadastroFornecedor()  # Cria a janela principal
+fornecedor_window = TelaCadastroProduto()  # Cria a janela principal
 fornecedor_window.show()  # Exibe a janela
 sys.exit(app.exec())  # Executa o loop da aplicação

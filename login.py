@@ -4,11 +4,23 @@ from PyQt6.QtGui import QPixmap, QFont
 from PyQt6.QtCore import Qt
 from PyQt6.QtSql import *
 from Database import Database
-from cadastroUsuario import TelaCadastro
+from cadastroUsuario import TelaUsuario
 
 class TelaPrincipal(QWidget):
     def __init__(self):
         super().__init__()
+
+        # Definição das cores usadas na interface
+        self.corVerdeEscuro = "#1D6373"  # Cor verde escuro
+        self.corVerdeclaro1 = "#378C74"  # Verde mais claro
+        self.corVerdeclaro2 = "#49A671"  # Verde ainda mais claro
+        self.corButton = "#3084F2"  # Cor dos botões entrar 
+        self.corBranco = "#F2F2F2"       # Cor branca para fundo
+        self.corEsqForm = "#222602" #Cor do lado esquerdo do formulário
+        self.corDirForm = "#DCF230" #Cor do lador direito do formulario
+        self.corTitle = "#000000" 
+        self.corBtnHover = "#2BAFF5" #cor do botao ao passar o mauser hover
+
         self.initUI()
 
     def initUI(self):
@@ -93,13 +105,13 @@ class TelaPrincipal(QWidget):
         self.btnEntrar.setFixedHeight(40)
         self.btnEntrar.setStyleSheet("""
             QPushButton {
-                background-color: #1D6373;
+                background-color: #3084F2;
                 color: white;
                 font-size: 16px;
                 border-radius: 5px;
             }
             QPushButton:hover {
-                background-color: #378C74;
+                background-color: #2BAFF5;
             }
         """)
         layoutForm.addWidget(self.btnEntrar)
@@ -113,7 +125,7 @@ class TelaPrincipal(QWidget):
         labelCadastro.setFont(QFont("Arial", 12))
        
         btnCadastro = QPushButton("Cadastre-se", self)
-        btnCadastro.setStyleSheet("color: #1D6373; background: transparent; border: none; text-decoration: underline;")
+        btnCadastro.setStyleSheet("color: #3084F2; background: transparent; border: none; text-decoration: underline;")
         btnCadastro.clicked.connect(self.realizarCadastro)
 
         layoutCadastro.addWidget(labelCadastro)
@@ -125,7 +137,7 @@ class TelaPrincipal(QWidget):
         # Estilo CSS para o formulário
         self.setStyleSheet("""
             QWidget {
-                background-color: #FFFFFF ;
+                background-color: #Dcf230 ;
             }
             QLabel {
                 color: #1D6373;
@@ -167,7 +179,7 @@ class TelaPrincipal(QWidget):
 
     def realizarCadastro(self):
         print("Cadastro realizado com sucesso!")
-        self.cadastroUsuario = TelaCadastro()
+        self.cadastroUsuario = TelaUsuario()
         self.cadastroUsuario.show()
         self.hide()
 
