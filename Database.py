@@ -1,7 +1,7 @@
 import sqlite3
 
 class Database:
-    def __init__(self, db_name):
+    def __init__(self, db_name="estoque.db"):
         """Inicializa a classe com o nome do banco de dados."""
         self.db_name = db_name
         self.conn = None
@@ -12,77 +12,106 @@ class Database:
         try:
             self.conn = sqlite3.connect(self.db_name)
             self.cursor = self.conn.cursor()
-            print(f"Conectado ao banco de dados: {self.db_name}")
         except sqlite3.Error as e:
             print(f"Erro ao conectar ao banco de dados: {e}")
-    
+
     def close(self):
         """Fecha a conexão com o banco de dados."""
         if self.conn:
             self.conn.close()
-            print("Conexão com o banco de dados fechada.")
-    
-    def create_table(self, table_name, columns):
-        """Cria uma tabela no banco de dados com o nome e as colunas especificadas."""
-        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({columns});"
-        try:
-            self.cursor.execute(query)
-            self.conn.commit()  # Comita a transação
-            print(f"Tabela '{table_name}' criada com sucesso.")
-        except sqlite3.Error as e:
-            print(f"Erro ao criar tabela: {e}")
-    
+
     def execute_query(self, query, params=()):
-        """Executa uma consulta SQL no banco de dados (como INSERT, UPDATE, DELETE)."""
+        """Executa uma consulta SQL no banco de dados (INSERT, UPDATE, DELETE)."""
         try:
+            self.connect()
             self.cursor.execute(query, params)
             self.conn.commit()
-            print("Consulta executada com sucesso.")
+            return True
         except sqlite3.Error as e:
             print(f"Erro ao executar consulta: {e}")
-    
+            return False
+        finally:
+            self.close()
+
     def fetch_all(self, query, params=()):
         """Executa uma consulta SELECT e retorna todos os resultados."""
         try:
+            self.connect()
             self.cursor.execute(query, params)
             return self.cursor.fetchall()
         except sqlite3.Error as e:
             print(f"Erro ao buscar dados: {e}")
             return []
-        
-    def checkLogin(self, username, password):
-        conn = self.connect()
-        if conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM usuarios WHERE email = ? AND senha = ?", (username, password))
-            user = cursor.fetchone()
-            conn.close()
-            return user
-        return None
+        finally:
+            self.close()
+
+    def checkLogin(self, email, senha):
+        """Verifica se o usuário existe no banco de dados."""
+        self.connect()
+        self.cursor.execute("SELECT * FROM usuarios WHERE email = ? AND senha = ?", (email, senha))
+        user = self.cursor.fetchone()
+        self.close()
+        return user
+
+    def salvarProduto(self, produto, unidade, categoria, usuario):
+        """Salva um novo produto no banco de dados."""
+        query = '''
+            INSERT INTO produto (nome_produto, id_unidade, id_categoria, data_cadastro, usuario) 
+            VALUES (?, ?, ?, CURRENT_DATE, ?)
+        '''
+        return self.execute_query(query, (produto, unidade, categoria, usuario))
+
+    def salvarFornecedor(self, nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, telefone_celular, email):
+        """Salva um novo fornecedor no banco de dados."""
+        query = '''
+            INSERT INTO fornecedor (nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, telefone_celular, email)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+        return self.execute_query(query, (nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, telefone_celular, email))
+
+    def salvarUsuario(self, nome, sobrenome, usuario, email, senha, dataNascimento):
+        """Salva um novo usuário no banco de dados."""
+        query = '''
+            INSERT INTO usuarios (nome, sobrenome, usuario, email, senha, data_nascimento) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        '''
+        return self.execute_query(query, (nome, sobrenome, usuario, email, senha, dataNascimento))
+
+    def adicionar_categoria(self, categoria):
+        """Adiciona categoria ao banco de dados."""
+        query = '''
+            INSERT INTO categoria(categoria) VALUES (?)
+        '''
+        return self.execute_query(query, (categoria,))
+
+
+    def verificar_email_existente(self, email):
+        """Verifica se um email já está cadastrado no banco"""
+        self.connect()
+        self.cursor.execute("SELECT id FROM usuarios WHERE email = ?", (email,))
+        existe = self.cursor.fetchone() is not None
+        self.close()
+        return existe
+
+    def adicionar_usuario(self, nome, sobrenome, usuario, email, senha, dataNascimento):
+        """Adiciona um novo usuário ao banco de dados."""
+        if self.verificar_email_existente(email):
+            print("E-mail já cadastrado.")
+            return False
+        return self.salvarUsuario(nome, sobrenome, usuario, email, senha, dataNascimento)
     
-    def salvarProduto(self, produto, unidade, categoria):
-        try:
-            query = '''
-                INSERT INTO produto (nome_produto, id_unidade, id_categoria, data_cadastro, usuario)
-                VALUES (?, (SELECT id_unidade FROM unidade WHERE unidade = ?), (SELECT id_categoria FROM categoria WHERE categoria = ?), CURRENT_DATE, ?)
-            '''
-            self.cursor.execute(query, (produto, unidade, categoria, "Usuário"))
-            self.conn.commit()
-            return True
-        except sqlite3.Error as e:
-            print(f"Erro ao salvar produto: {e}")
-            return False
-        
-    def salvarFornecedor(self, nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, data_cadastro, telefone_celular, email):
-        try:
-            query = '''
-                INSERT INTO fornecedor (nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, data_cadastro, telefone_celular, email)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            '''
-            self.cursor.execute(query, (nome_empresa, cnpj_cpf, endereco, numero, bairro, cidade, complemento, uf, inscricao_estadual, data_cadastro, telefone_celular, email))
-            self.conn.commit()
-            print("Fornecedor salvo com sucesso.")
-            return True
-        except sqlite3.Error as e:
-            print(f"Erro ao salvar fornecedor: {e}")
-            return False
+    def buscar_produtos(self, categoria=None, busca=None):
+        """Retorna todos os produtos filtrados por categoria e/ou nome."""
+        query = "SELECT nome, categoria, preco FROM produtos WHERE 1=1"
+        params = []
+
+        if categoria and categoria != "Todos":
+            query += " AND categoria = ?"
+            params.append(categoria)
+
+        if busca:
+            query += " AND nome LIKE ?"
+            params.append(f"%{busca}%")
+
+        return self.fetch_all(query, tuple(params))
+  

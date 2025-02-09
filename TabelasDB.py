@@ -8,9 +8,11 @@ cursor.execute('''
 CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
+    sobrenome TEXT NOT NULL,
+    usuario TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     senha TEXT NOT NULL,
-    data_nascimento DATE DEFAULT CURRENT_DATE
+    data_nascimento TEXT NOT NULL
 );
 ''')
 
@@ -33,8 +35,8 @@ CREATE TABLE IF NOT EXISTS entrada_produto (
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS fornecedor (
     id_fornecedor INTEGER PRIMARY KEY AUTOINCREMENT,  
-    nome_empresa TEXT NOT NULL,                      
-    cnpj_cpf TEXT NOT NULL,                         
+    nome_empresa TEXT NOT NULL,                       
+    cnpj_cpf TEXT NOT NULL,                          
     endereco TEXT,                                   
     numero TEXT,                                     
     bairro TEXT,                                    
@@ -71,7 +73,7 @@ CREATE TABLE IF NOT EXISTS produto (
     nome_produto TEXT NOT NULL,                      
     id_unidade INTEGER,                              
     id_categoria INTEGER,                            
-    data_cadastro DATE DEFAULT CURRENT_DATE,         
+    data_cadastro DATE DEFAULT CURRENT_DATE,        
     usuario TEXT,                                    
     FOREIGN KEY (id_unidade) REFERENCES unidade(id_unidade),  
     FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria)
@@ -91,6 +93,16 @@ CREATE TABLE IF NOT EXISTS registro_modificacoes (
 );
 ''')
 
+# Tabela registro_login para registrar login
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS registro_login (
+    id_login INTEGER PRIMARY KEY AUTOINCREMENT,  
+    id_usuario INTEGER,                                                                  
+    data_login DATE DEFAULT CURRENT_DATE,        
+    hora_login DATETIME DEFAULT CURRENT_TIMESTAMP,                             
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id)
+);
+''')
+
 conexao.commit()
 conexao.close()
-

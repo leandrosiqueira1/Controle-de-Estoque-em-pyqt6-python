@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (
     QLineEdit, QPushButton, QLabel, QFormLayout, QFrame, QMessageBox,QComboBox
 )
 from PyQt6.QtGui import QIcon, QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt , QSize
 import sqlite3
 from Database import Database
 from datetime import datetime  # Importa datetime
@@ -44,7 +44,7 @@ class TelaCadastroFornecedor(QWidget):
 
         # Botão para "Cadastrar Novo Produto"
         btnCadastrarProduto = QPushButton("Cadastrar Novo Produto", self)
-        btnCadastrarProduto.setIcon(QIcon('img/logo_50.png'))  # Define um ícone para o botão
+        btnCadastrarProduto.setIcon(QIcon('img/novo.png'))  # Define um ícone para o botão
         btnCadastrarProduto.setFixedSize(300, 60)  # Tamanho fixo do botão
         btnCadastrarProduto.setStyleSheet(f"background-color: {self.corButton}; color: {self.corBranco};")  # Estilo do botão
         layoutEsquerda.addWidget(btnCadastrarProduto)  # Adiciona o botão ao layout da esquerda
@@ -136,6 +136,7 @@ class TelaCadastroFornecedor(QWidget):
         formulario.addRow("Bairro:", self.bairroInput)
 
         self.ufInput = QComboBox(self)
+        self.ufInput.setStyleSheet('background-color: #F0F0F0; border-radius: 8px; padding: 10px 8px;')
         estados = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
         self.ufInput.addItems(estados)
         formulario.addRow("UF:", self.ufInput)
@@ -162,7 +163,20 @@ class TelaCadastroFornecedor(QWidget):
         # Botão "Salvar" no formulário
         btnSalvar = QPushButton("Salvar", self)
         btnSalvar.setFixedSize(300, 60)
-        btnSalvar.setStyleSheet(f"background-color: {self.corButton}; color: {self.corBranco}; border-radius: 10px; font-size: 16px;")  # Estilo do botão
+        btnSalvar.setStyleSheet("""
+                QPushButton {
+                    background-color: "#3084F2"; 
+                    color: "#F2F2F2"; 
+                    border-radius: 10px; 
+                    font-size: 16px;
+                }
+                QPushButton:hover{
+                    background-color: "#2FC5FB"; 
+                    color: "#F2F2F2"; 
+                }
+        """)
+
+        #btnSalvar.setStyleSheet(f"background-color: {self.corButton}; color: {self.corBranco}; border-radius: 10px; font-size: 16px;")  # Estilo do botão
         btnSalvar.clicked.connect(self.cadastrarFornecedor)  # Conecta o clique do botão ao método cadastrarFornecedor
         layoutbtnSalvar.addWidget(btnSalvar)
         layoutbtnSalvar.addStretch()

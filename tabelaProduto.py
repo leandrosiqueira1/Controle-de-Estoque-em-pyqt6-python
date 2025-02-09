@@ -10,31 +10,48 @@ class TabelaProdutos(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Tabela de Produtos com Pesquisa")
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(0,0,1280,800)
+
+        # Definição das cores usadas na interface
+        self.corVerdeEscuro = "#1D6373"  # Cor verde escuro
+        self.corVerdeclaro1 = "#378C74"  # Verde mais claro
+        self.corVerdeclaro2 = "#49A671"  # Verde ainda mais claro
+        self.corButton = "#3084F2"  # Cor dos botões entrar 
+        self.corBranco = "#F2F2F2"  # Cor branca para fundo
+        self.corEsqForm = "#222602"  # Cor do lado esquerdo do formulário
+        self.corDirForm = "#DCF230"  # Cor do lado direito do formulário
+        self.corTitle = "#000000" 
+
 
         self.layout = QVBoxLayout()
-
         self.search_bar = QLineEdit()
         self.search_bar.setPlaceholderText("Pesquisar...")
+        self.search_bar.setStyleSheet("background-color: #F2F2F2; padding:10px;margin:10px;border-radius: 5px;border: 1px solid black")
         self.search_bar.textChanged.connect(self.filter_data)
         self.layout.addWidget(self.search_bar)
+        
 
         self.table_widget = QTableWidget()
         self.layout.addWidget(self.table_widget)
 
+
         self.print_button = QPushButton("Imprimir")
+        self.print_button.setStyleSheet("background-color: #DE3456;border-radius:10px; padding: 10px; margin:5px;")
         self.print_button.clicked.connect(self.print_table)
         self.layout.addWidget(self.print_button)
 
         self.save_pdf_button = QPushButton("Salvar como PDF")
+        self.save_pdf_button.setStyleSheet("background-color: #1E3456;border-radius: 10px; padding: 10px; margin:5px;")
         self.save_pdf_button.clicked.connect(self.save_pdf)
         self.layout.addWidget(self.save_pdf_button)
 
         self.delete_button = QPushButton("Deletar")
+        self.delete_button.setStyleSheet("background-color: #893456;border-radius: 10px; padding: 10px; margin:5px;")
         self.delete_button.clicked.connect(self.delete_item)
         self.layout.addWidget(self.delete_button)
 
         self.modify_button = QPushButton("Modificar")
+        self.modify_button.setStyleSheet("background-color: #DE5600;border-radius: 10px; padding: 10px; margin:5px;")
         self.modify_button.clicked.connect(self.modify_item)
         self.layout.addWidget(self.modify_button)
 
@@ -81,7 +98,7 @@ class TabelaProdutos(QMainWindow):
                 font-size: 14px;
             }
             QHeaderView::section {
-                background-color: #f0f0f0;
+                background-color: #DCF230;
                 padding: 4px;
                 border: 1px solid #dcdcdc;
             }

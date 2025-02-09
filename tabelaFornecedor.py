@@ -16,6 +16,7 @@ class TabelaFornecedores(QMainWindow):
 
         self.search_bar = QLineEdit()
         self.search_bar.setPlaceholderText("Pesquisar...")
+        self.search_bar.setStyleSheet("background-color: #DCF230; padding:10px;margin: 10px;border-radius: 5px;")
         self.search_bar.textChanged.connect(self.filter_data)
         self.layout.addWidget(self.search_bar)
 
@@ -76,14 +77,14 @@ class TabelaFornecedores(QMainWindow):
             self.table_widget.setColumnCount(0)
 
         self.table_widget.setStyleSheet("""
-            QTableWidget {
+            QTableWidget {                       
                 border: 1px solid #dcdcdc;
                 font-size: 14px;
             }
             QHeaderView::section {
-                background-color: #f0f0f0;
+                background-color: #DCF230;
                 padding: 4px;
-                border: 1px solid #dcdcdc.
+                border: 1px solid #dcdcdc;
             }
             QTableWidget::item {
                 padding: 4px.

@@ -1,145 +1,142 @@
 import sys
-from PyQt6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QFormLayout, QMessageBox, QFrame
+import hashlib
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel,
+    QMessageBox, QFrame, QSpacerItem, QSizePolicy
+)
 from PyQt6.QtGui import QPixmap, QFont
 from PyQt6.QtCore import Qt
-import hashlib  
+from Database import Database
 
 class TelaUsuario(QWidget):
     def __init__(self):
         super().__init__()
 
-        # Definição das cores usadas na interface
-        self.corVerdeEscuro = "#1D6373"  # Cor verde escuro
-        self.corVerdeclaro1 = "#378C74"  # Verde mais claro
-        self.corVerdeclaro2 = "#49A671"  # Verde ainda mais claro
-        self.corButton = "#3084F2"  # Cor dos botões entrar 
-        self.corBranco = "#F2F2F2"       # Cor branca para fundo
-        self.corEsqForm = "#222602" #Cor do lado esquerdo do formulário
-        self.corDirForm = "#DCF230" #Cor do lador direito do formulario
+        # Cor do formulário
         self.corForm = "#DCF230"
-        self.corTitle = "#000000" 
-        
+
         self.initUI()
-        
 
     def initUI(self):
-        # Configurações da janela (800x600)
+        """Inicializa a interface gráfica"""
         self.setWindowTitle("Tela de Cadastro")
         self.setFixedSize(1280, 800)
-        
 
-
-        # Layout principal
+        # Layout principal para centralizar tudo
         layoutPrincipal = QVBoxLayout()
+        layoutPrincipal.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setLayout(layoutPrincipal)
 
-        # Layout para a imagem (centrada)
+        # Layout centralizado
+        layoutCentro = QVBoxLayout()
+        layoutCentro.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Imagem no topo
         layoutImagem = QHBoxLayout()
-        layoutPrincipal.addLayout(layoutImagem)
-        layoutImagem.addStretch()
+        layoutImagem.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         logo = QLabel()
-        logo.setStyleSheet("background-color: transparent;")
-        logo.setFixedSize(180, 180)  
-    
-        logo.setPixmap(QPixmap("img/user-tipo_02-03.png").scaled(150, 150))
-        layoutImagem.addWidget(logo) 
-        layoutImagem.addStretch() 
-        layoutImagem.setAlignment(Qt.AlignmentFlag.AlignHCenter)  
+        logo.setPixmap(QPixmap("img/user-tipo_02-03.png").scaled(120, 120, Qt.AspectRatioMode.KeepAspectRatio))
+        layoutImagem.addWidget(logo)
 
-      
+        # Formulário
         self.frameFundo = QFrame()
-        self.frameFundo.setFixedSize(500, 500)
-        self.frameFundo.setStyleSheet("background-color: {self.corForm};") 
-        layoutForm = QFormLayout(self.frameFundo)
-        layoutForm.setContentsMargins(40, 40, 40, 40) 
-        layoutForm.setSpacing(20) 
+        self.frameFundo.setFixedSize(600, 700)
+        self.frameFundo.setStyleSheet(f"background-color: {self.corForm}; border-radius: 10px;")
+        layoutForm = QVBoxLayout(self.frameFundo)
+        layoutForm.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layoutForm.setContentsMargins(30, 30, 30, 30)
+        layoutForm.setSpacing(8)
 
-        # Título do formulário
+        # Título
         labelLegenda = QLabel("Cadastro de Usuário")
-        labelLegenda.setFont(QFont("Roboto", 24, 600))
+        labelLegenda.setFont(QFont("Roboto", 20, 600))
         labelLegenda.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layoutForm.addWidget(labelLegenda)
 
-        # Campos do formulário
-        labelUsuario = QLabel("Usuário")
-        layoutForm.addWidget(labelUsuario)
+        # Estilo para os campos de entrada
+        estiloCaixaTexto = """
+            QLineEdit {
+                background-color: white;
+                border: 1px solid #888;
+                border-radius: 8px;
+                padding: 8px;
+                font-size: 14px;
+            }
+        """
 
-        self.campoUsuario = QLineEdit()
-        self.campoUsuario.setPlaceholderText("Digite seu nome de usuário")
-        layoutForm.addWidget(self.campoUsuario)
-        
+        # Método para criar campos com a label acima
+        def criar_campo(label_texto, placeholder):
+            layout = QVBoxLayout()
+            label = QLabel(label_texto)
+            label.setFont(QFont("Roboto", 14))
+            campo = QLineEdit()
+            campo.setPlaceholderText(placeholder)
+            campo.setStyleSheet(estiloCaixaTexto)
+            layout.addWidget(label)
+            layout.addWidget(campo)
+            return layout, campo
 
-        labelSenha = QLabel("Senha")
-        layoutForm.addWidget(labelSenha)
-
-        self.campoSenha = QLineEdit()
-        self.campoSenha.setPlaceholderText("Digite sua senha")
+        # Criando os campos
+        layoutNome,self.campoNome = criar_campo("Nome","Digite seu nome")
+        layoutSobreNome,self.campoSobrenome = criar_campo("Sobrenome","Sobrenome")
+        layoutUsuario, self.campoUsuario = criar_campo("Usuário", "Digite seu nome de usuário")
+        layoutEmail, self.campoEmail = criar_campo("E-mail", "Digite seu e-mail")
+        layoutSenha, self.campoSenha = criar_campo("Senha", "Digite sua senha")
         self.campoSenha.setEchoMode(QLineEdit.EchoMode.Password)
-        layoutForm.addWidget(self.campoSenha)
-
-        labelConfirmarSenha = QLabel("Confirmar Senha")
-        layoutForm.addWidget(labelConfirmarSenha)
-
-        self.campoConfirmarSenha = QLineEdit()
-        self.campoConfirmarSenha.setPlaceholderText("Digite novamente a senha")
+        layoutConfirmarSenha, self.campoConfirmarSenha = criar_campo("Confirmar Senha", "Confirme sua senha")
         self.campoConfirmarSenha.setEchoMode(QLineEdit.EchoMode.Password)
-        layoutForm.addWidget(self.campoConfirmarSenha)
+        layoutDataNascimento, self.campoDataNascimento = criar_campo("Data de Nascimento", "Digite sua data de nascimento (YYYY-MM-DD)")
 
         # Botão de cadastro
         self.btnCadastrar = QPushButton("Cadastrar")
         self.btnCadastrar.setFixedHeight(50)
         self.btnCadastrar.setStyleSheet("""
             QPushButton {
-                background-color: #1D6373;
+                background-color: #3084F2;
                 color: white;
-                font-size: 18px;
+                font-size: 14px;
                 border-radius: 10px;
+                margin-top: 5px;
                 padding: 10px;
             }
             QPushButton:hover {
-                background-color: #378C74;
+                background-color: "#2FC5FB";
             }
-                       
-            }                          
         """)
         self.btnCadastrar.clicked.connect(self.realizarCadastro)
-        layoutForm.addRow(self.btnCadastrar)
 
-        # Adiciona o QFrame ao layout principal
-        layoutPrincipal.addWidget(self.frameFundo, alignment=Qt.AlignmentFlag.AlignHCenter)
+        # Adicionando elementos ao layout do formulário
+        
+        layoutForm.addWidget(labelLegenda)
 
-        # Estilo CSS para os widgets
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #DCF230;")
-                
-            }
-            QLabel {
-                font-size: 16px;
-                color: #333333;
-            }
-            QLineEdit {
-                background-color: #ffffff;
-                border: 1px solid #1D6373;
-                padding: 12px;
-                border-radius: 10px;
-                font-size: 16px;
-                height: 35px;
-            }
-            QFrame {
-                background-color: {#DCF230};
-                border-radius: 15px;
-                box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-            }
-        """)
+        layoutForm.addLayout(layoutNome)
+        layoutForm.addLayout(layoutSobreNome)
+        layoutForm.addLayout(layoutUsuario)
+        layoutForm.addLayout(layoutEmail)
+        layoutForm.addLayout(layoutSenha)
+        layoutForm.addLayout(layoutConfirmarSenha)
+        layoutForm.addLayout(layoutDataNascimento)
+        layoutForm.addWidget(self.btnCadastrar)
+
+        # Adicionando imagem e formulário ao layout central
+        layoutCentro.addLayout(layoutImagem)
+        layoutCentro.addWidget(self.frameFundo, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        # Adicionando espaçadores para centralizar tudo
+        layoutPrincipal.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+        layoutPrincipal.addLayout(layoutCentro)
+        layoutPrincipal.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
     def realizarCadastro(self):
-        usuario = self.campoUsuario.text()
-        senha = self.campoSenha.text()
-        confirmar_senha = self.campoConfirmarSenha.text()
+        nome = self.campoNome.text().strip()
+        sobrenome = self.campoSobrenome.text().strip()
+        usuario = self.campoUsuario.text().strip()
+        email = self.campoEmail.text().strip()
+        senha = self.campoSenha.text().strip()
+        confirmar_senha = self.campoConfirmarSenha.text().strip()
+        data_nascimento = self.campoDataNascimento.text().strip()
 
-        if not usuario or not senha or not confirmar_senha:
+        if not usuario or not email or not senha or not confirmar_senha or not data_nascimento:
             QMessageBox.warning(self, "Erro", "Por favor, preencha todos os campos.")
             return
 
@@ -147,40 +144,31 @@ class TelaUsuario(QWidget):
             QMessageBox.warning(self, "Erro", "As senhas não coincidem.")
             return
 
-        # Criptografar a senha
         senha_hash = hashlib.sha256(senha.encode()).hexdigest()
-
-        # Aqui, você pode inserir no banco de dados
-        # Exemplo fictício de cadastro (substitua isso por uma função de inserção real no seu banco)
-        sucesso = self.cadastrarUsuarioNoBanco(usuario, senha_hash)
+        
+        db = Database()
+        sucesso = db.adicionar_usuario(nome, sobrenome, usuario, email, senha_hash, data_nascimento)
 
         if sucesso:
             QMessageBox.information(self, "Sucesso", "Usuário cadastrado com sucesso!")
+            
+            self.limparCampos
+
         else:
             QMessageBox.warning(self, "Erro", "Erro ao cadastrar o usuário.")
 
-    def cadastrarUsuarioNoBanco(self, usuario, senha_hash):
-        # Função fictícia para cadastrar o usuário no banco de dados.
-        # Substitua isso com o código de inserção real no seu banco.
-        try:
-            # Aqui você faria uma conexão com o banco de dados e faria a inserção
-            # Por exemplo, com SQLite:
-            # db = Database('estoque.db')
-            # db.adicionar_usuario(usuario, senha_hash)
-            # db.close()
-            return True  # Simula que o cadastro foi bem-sucedido
-        except Exception as e:
-            print(f"Erro ao cadastrar: {e}")
-            return False
-        
+    def limparCampos(self):
+        self.campoNome.clear()
+        self.campoSobrenome.clear()
+        self.campoUsuario.clear()
+        self.campoEmail.clear()
+        self.campoSenha.clear()
+        self.campoConfirmarSenha.clear()
+        self.campoDataNascimento.clear()
 
-# Criar a aplicação PyQt6
+
 if __name__ == '__main__':
-
     app = QApplication(sys.argv)
-
-    # Criar a janela de cadastro
-    cadastro_window = TelaUsuario()
-    cadastro_window.show()
-    # Executar o loop de eventos
+    usuario_window = TelaUsuario()
+    usuario_window.show()
     sys.exit(app.exec())

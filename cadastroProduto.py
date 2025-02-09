@@ -134,7 +134,7 @@ class TelaCadastroProduto(QWidget):
         btnSalvar.setStyleSheet(f"background-color: {self.corButton}; color: {self.corBranco}; border-radius: 10px;font-size: 16px;")  # Estilo do botão
         layoutbtnSalvar.addWidget(btnSalvar)
         layoutbtnSalvar.addStretch()
-
+        
         # Adiciona o layout do botão centralizado ao formulário
         formulario.addRow(layoutbtnSalvar)  # Adiciona o botão ao formulário
         
@@ -156,15 +156,26 @@ class TelaCadastroProduto(QWidget):
         produto = self.nomeInput.text()
         unidade = self.unidadeInput.text()
         categoria = self.categoriaInput.text()
-        db = Database('estoque.db')
-        
-    
-        if db.salvarProduto(produto,unidade,categoria):
+
+        if not produto or not unidade or not categoria:
             QMessageBox.information(self, "Sucesso", "Produto cadastrado com sucesso!")
+            return
+        
+        db = Database('estoque.db')
+        db.connect()
+
+        if db.salvarProduto(self, produto, unidade, categoria):
+            QMessageBox.information(self, "Sucesso", "Produto cadastrado com sucesso!")
+            self.limparCampos()
         else:
             QMessageBox.warning(self, "Erro", "Erro ao cadastrar o produto!")
-        
-        db.close()
+
+    def limparCampos(self):
+
+        self.nomeInput.clear()
+        self.unidadeInput.clear()
+        self.categoriaInput.clear()
+
 
 # Inicialização da aplicação
 app = QApplication(sys.argv)  # Cria a aplicação
