@@ -114,4 +114,31 @@ class Database:
             params.append(f"%{busca}%")
 
         return self.fetch_all(query, tuple(params))
-  
+    
+    
+    def salvarEntradaProduto(self, produto, unidade, categoria, quantidade, nfe, dataEmissao, dataCadastro, fornecedor):
+    #Salva a entrada de um produto no banco de dados.
+        query = '''
+            INSERT INTO entrada_produto (produto, unidade, categoria, quantidade, nfe, dataEmissaoNfe, dataCadastroNfe, fornecedor)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+        return self.execute_query(query, (produto, unidade, categoria, quantidade, nfe, dataEmissao, dataCadastro, fornecedor))
+    
+
+    def buscar_unidades(self):
+    #Busca todas as unidades cadastradas no banco de dados."""
+        query = "SELECT unidade FROM unidade"
+        return self.fetch_all(query)
+        
+
+    def buscar_categorias(self):
+        #Busca todas as categorias cadastradas no banco de dados."""
+        query = "SELECT categoria FROM categoria"
+        return self.fetch_all(query)
+
+    def buscar_produtos(self):
+        #Busca todos os produtos cadastrados no banco de dados."""
+        query = "SELECT nome_produto FROM produto"
+        return self.fetch_all(query)
+    
+
